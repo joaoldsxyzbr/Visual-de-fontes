@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Barra de Formatação",
+  "version": "0.1.0",
+  "description": "Barra flutuante com negrito, itálico, riscado, código, listas e citação ao selecionar texto em qualquer campo editável.",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/conteudo.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["src/formatador.js", "src/dominios.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

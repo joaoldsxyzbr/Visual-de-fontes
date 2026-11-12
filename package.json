@@ -1,0 +1,10 @@
+{
+  "name": "extensao-formatar",
+  "version": "0.1.0",
+  "description": "Barra de formatação flutuante (B, i, riscado, código, listas, citação) para campos editáveis em qualquer site",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --test \"testes/*.test.js\""
+  }
+}
