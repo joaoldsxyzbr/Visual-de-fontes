@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { sintaxeDe } from '../src/dominios.js';
+import { sintaxeDe, ricosComoTexto } from '../src/dominios.js';
 
 // --- domínios conhecidos ---
 
@@ -33,4 +33,20 @@ test('Notion, Figma, Office e Canva devolvem null', () => {
   assert.equal(sintaxeDe('https://www.figma.com/file/abc/Design'), null);
   assert.equal(sintaxeDe('https://www.office.com/launch/word'), null);
   assert.equal(sintaxeDe('https://www.canva.com/design/DAF'), null);
+});
+
+// --- sintaxe aplicada como texto mesmo em campo rico ---
+
+test('sintaxe WhatsApp aplica marcadores como texto até em contenteditable', () => {
+  // WhatsApp Web tem campo rico que rejeita formatação HTML
+  assert.equal(ricosComoTexto('whatsapp'), true);
+});
+
+test('sintaxe markdown e html usam formatação nativa em campo rico', () => {
+  assert.equal(ricosComoTexto('markdown'), false);
+  assert.equal(ricosComoTexto('html'), false);
+});
+
+test('sintaxe de exclusão nunca chega a aplicar nada', () => {
+  assert.equal(ricosComoTexto(null), false);
 });

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Barra de Formatação",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Barra flutuante com negrito, itálico, riscado, código, listas e citação ao selecionar texto em qualquer campo editável.",
   "content_scripts": [
     {

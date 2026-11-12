@@ -1,5 +1,6 @@
 // Sintaxe de formatação esperada por site, em campos de texto puro.
-// Campo rico (contenteditable) não passa por aqui: usa comandos nativos.
+// Campo rico (contenteditable) dos domínios NÃO excluídos usa comandos nativos —
+// exceto os que só entendem marcadores: ver ricosComoTexto abaixo.
 //
 // Em texto puro não existe detecção infalível — o campo não declara o que
 // entende. Esta tabela é a aproximação: domínios conhecidos + fallback markdown.
@@ -56,4 +57,14 @@ export function sintaxeDe(url) {
     if (dominios.some((d) => casaSufixo(host, d))) return sintaxe;
   }
   return 'markdown'; // fallback: melhor aposta padrão
+}
+
+// Sintaxes que devem ser aplicadas como TEXTO mesmo em campo rico
+// (contenteditable). Editores de marcadores: o WhatsApp Web usa um
+// contenteditable que rejeita/ignora formatação HTML (execCommand bold etc.)
+// e só renderiza *texto*, _texto_, ~texto~ ao enviar — nele, os botões
+// precisam inserir os marcadores literalmente. Markdown/html continuam
+// usando os comandos nativos do editor rico.
+export function ricosComoTexto(sintaxe) {
+  return sintaxe === 'whatsapp';
 }

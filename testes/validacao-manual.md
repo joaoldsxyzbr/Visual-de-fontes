@@ -19,6 +19,8 @@ Data: ____/____/______  Navegador: Chrome ____  Resultado de cada item: ✅ / �
 | 1.5 | Rolar a página com texto selecionado | Bolha acompanha a seleção, não fica "solta" | ☐ |
 | 1.6 | Apertar Esc com bolha visível | Bolha some | ☐ |
 | 1.7 | Visitar docs.google.com e selecionar texto em doc | Bolha NÃO aparece (exclusão) | ☐ |
+| 1.8 | Selecionar um trecho no MEIO do textarea alto | Bolha abre acima do TRECHO selecionado, não no topo do campo | ☐ |
+| 1.9 | Rolar o textarea (não a página) com a bolha visível | Bolha acompanha o trecho selecionado sem travar | ☐ |
 
 ## Bloco 2 — Botões em texto puro (textarea da seção 1)
 
@@ -56,7 +58,7 @@ Data: ____/____/______  Navegador: Chrome ____  Resultado de cada item: ✅ / �
 
 | # | Site | Esperado | OK? |
 | --- | --- | --- | --- |
-| 5.1 | web.whatsapp.com → campo de mensagem | Sintaxe WhatsApp: `*b*`, `_i_`, `~s~`, "```código```" | ☐ |
+| 5.1 | web.whatsapp.com → campo de mensagem (é contenteditable) | Botões inserem a sintaxe WhatsApp como texto: `*b*`, `_i_`, `~s~`, ``` ```code``` ``` — vira negrito/itálico real ao ENVIAR | ☐ |
 | 5.2 | github.com → comentário em issue | Markdown: `**b**`, `*i*`, `~~s~~` | ☐ |
 | 5.3 | Gmail → corpo do e-mail | Formatação rica real (campo contenteditable) | ☐ |
 
