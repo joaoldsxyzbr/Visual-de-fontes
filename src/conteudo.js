@@ -127,8 +127,59 @@
 
   const escaparHtml = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+  // Retângulo aproximado da seleção dentro de input/textarea, via div espelho
+  // com os mesmos estilos de fonte/padding do campo. Retorna null se falhar.
+  const PROPS_ESPELHO = [
+    'fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'letterSpacing', 'lineHeight',
+    'textTransform', 'wordSpacing', 'textIndent', 'paddingTop', 'paddingRight',
+    'paddingBottom', 'paddingLeft', 'borderTopWidth', 'borderLeftWidth', 'boxSizing', 'width',
+  ];
+
+  function retanguloSelecaoTexto(el) {
+    let espelho = null;
+    try {
+      espelho = document.createElement('div');
+      const estilos = getComputedStyle(el);
+      for (const p of PROPS_ESPELHO) espelho.style[p] = estilos[p];
+      espelho.style.cssText += 'position:absolute; visibility:hidden; left:-9999px; top:0; height:auto; overflow:hidden;';
+      espelho.style.whiteSpace = el instanceof HTMLTextAreaElement ? 'pre-wrap' : 'pre';
+      espelho.style.wordWrap = 'break-word';
+      espelho.style.overflowWrap = 'break-word';
+      document.body.appendChild(espelho);
+
+      const marcar = (pos) => {
+        espelho.textContent = '';
+        espelho.appendChild(document.createTextNode(el.value.slice(0, pos)));
+        const m = document.createElement('span');
+        m.textContent = '\u200b';
+        espelho.appendChild(m);
+        return m;
+      };
+      const ini = marcar(el.selectionStart);
+      const rIni = { left: ini.offsetLeft, top: ini.offsetTop, altura: ini.offsetHeight || parseFloat(estilos.lineHeight) || 20 };
+      const fim = marcar(el.selectionEnd);
+      const rFim = { left: fim.offsetLeft };
+
+      const rect = el.getBoundingClientRect();
+      const esquerda = Math.min(rIni.left, rFim.left);
+      const direita = Math.max(rIni.left, rFim.left);
+      return {
+        left: rect.left + esquerda - el.scrollLeft,
+        right: rect.left + direita - el.scrollLeft,
+        top: rect.top + rIni.top - el.scrollTop,
+        bottom: rect.top + rIni.top + rIni.altura - el.scrollTop,
+        width: direita - esquerda,
+        height: rIni.altura,
+      };
+    } catch {
+      return null;
+    } finally {
+      if (espelho && espelho.parentNode) espelho.parentNode.removeChild(espelho);
+    }
+  }
+
   function retanguloDaSelecao() {
-    if (alvo.tipo === 'texto') return alvo.el.getBoundingClientRect();
+    if (alvo.tipo === 'texto') return retanguloSelecaoTexto(alvo.el) || alvo.el.getBoundingClientRect();
     const sel = document.getSelection();
     if (!sel || sel.rangeCount === 0) return null;
     let r = sel.getRangeAt(0).getBoundingClientRect();
@@ -207,6 +258,10 @@
   };
 
   function aplicarRico(id) {
+    // Editores que só entendem marcadores (ex.: WhatsApp Web é contenteditable,
+    // mas rejeita formatação HTML): aplica a sintaxe como texto.
+    if (dominios.ricosComoTexto(sintaxe)) return aplicarRicoComoTexto(id);
+
     const el = alvo.el;
     el.focus();
     const sel = document.getSelection();
@@ -244,6 +299,41 @@
     aoMudarSelecao(); // bolha acompanha: reposiciona se ainda há seleção, esconde se não
   }
 
+  // Campo rico de editor que só entende marcadores (ex.: WhatsApp Web):
+  // formata o texto selecionado com a sintaxe do site e insere como texto puro.
+  // Limitação v0.1.1: a seleção colapsa após aplicar (a bolha some).
+  function aplicarRicoComoTexto(id) {
+    const el = alvo.el;
+    el.focus();
+    const sel = document.getSelection();
+    if (!sel || sel.isCollapsed) return esconder();
+    const texto = sel.toString();
+    if (!texto) return esconder();
+
+    let novo = null;
+    const m = MARCADORES[sintaxe][id];
+    if (m) {
+      novo = formatador.aplicarInline(texto, 0, texto.length, m[0], m[1]).valor;
+    } else if (id === 'citacao') {
+      novo = formatador.prefixarLinhas(texto, 0, texto.length, '> ').valor;
+    } else if (id === 'lista-marcadores') {
+      novo = formatador.prefixarLinhas(texto, 0, texto.length, '- ').valor;
+    } else if (id === 'lista-numerada') {
+      novo = formatador.numerarLinhas(texto, 0, texto.length).valor;
+    }
+    if (novo === null) return;
+
+    let ok = false;
+    try { ok = document.execCommand('insertText', false, novo); } catch { ok = false; }
+    if (!ok) {
+      // Fallback: substitui o range pelo texto formatado
+      const r = sel.getRangeAt(0);
+      r.deleteContents();
+      r.insertNode(document.createTextNode(novo));
+    }
+    aoMudarSelecao(); // seleção colapsa → bolha some
+  }
+
   function aplicarTexto(id) {
     const el = alvo.el;
     el.focus();
@@ -278,7 +368,19 @@
   document.addEventListener('focusout', (e) => {
     if (alvo && alvo.tipo === 'texto' && e.target === alvo.el) esconder();
   });
-  document.addEventListener('scroll', () => { if (alvo) reposicionar(); }, true);
-  window.addEventListener('resize', () => { if (alvo) reposicionar(); });
+
+  // Reposiciona com throttle de rAF: scroll/resize podem disparar dezenas de
+  // vezes por segundo, e a medição por espelho recria nós do DOM.
+  let reposicionarAgendado = false;
+  function agendarReposicionar() {
+    if (!alvo || reposicionarAgendado) return;
+    reposicionarAgendado = true;
+    requestAnimationFrame(() => {
+      reposicionarAgendado = false;
+      reposicionar();
+    });
+  }
+  document.addEventListener('scroll', agendarReposicionar, true);
+  window.addEventListener('resize', agendarReposicionar);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && alvo) esconder(); });
 })();
