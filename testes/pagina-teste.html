@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Página de teste — Barra de Formatação</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; color: #111; }
+  h1 { font-size: 20px; }
+  fieldset { margin: 24px 0; border: 1px solid #ccc; border-radius: 8px; padding: 12px; }
+  legend { font-weight: 600; padding: 0 6px; }
+  textarea, input[type="text"] { width: 100%; box-sizing: border-box; font: 14px/1.5 inherit; padding: 8px; border: 1px solid #999; border-radius: 6px; }
+  [contenteditable="true"] { min-height: 60px; border: 1px dashed #999; border-radius: 6px; padding: 8px; }
+  p.dica { color: #555; font-size: 13px; }
+</style>
+</head>
+<body>
+  <h1>Página de teste — Barra de Formatação</h1>
+  <p class="dica">
+    Selecione texto em cada campo abaixo. A bolha deve aparecer acima da seleção.
+    Nesta página (domínio local) a sintaxe usada nos campos de texto puro é markdown:
+    <code>**negrito**</code>, <code>*itálico*</code>, <code>~~risca~~</code>, <code>`código`</code>.
+  </p>
+
+  <fieldset>
+    <legend>1. Textarea (texto puro)</legend>
+    <textarea rows="4">Primeira linha com palavra destacável
+Segunda linha para testar citação
+Terceira linha para listas
+Uma quarta linha qualquer, com texto suficiente para selecionar e testar os sete botões da barra.</textarea>
+  </fieldset>
+
+  <fieldset>
+    <legend>2. Input de texto (texto puro)</legend>
+    <input type="text" value="campo de linha única para negrito e itálico">
+  </fieldset>
+
+  <fieldset>
+    <legend>3. Campo rico (contenteditable)</legend>
+    <div contenteditable="true">Texto editável rico: selecione um trecho e use os sete botões. Deve renderizar negrito, itálico, riscado, código, listas e citação de verdade.</div>
+  </fieldset>
+
+  <fieldset>
+    <legend>4. Encadeamento e toggle</legend>
+    <p class="dica">Aplique dois formatos no mesmo trecho (ex.: negrito + itálico) e depois clique duas vezes no mesmo botão para remover.</p>
+    <textarea rows="3">selecione este trecho inteiro e encadeie formatos, depois desfaça cada um com o mesmo botão</textarea>
+    <div contenteditable="true">campo rico para o mesmo teste de encadeamento e toggle</div>
+  </fieldset>
+
+  <p class="dica">
+    Teste também em sites reais: WhatsApp Web (sintaxe própria *b* _i_ ~s~), GitHub
+    (markdown em issues/PRs) e Gmail (campo rico).
+  </p>
+</body>
+</html>
