@@ -23,6 +23,8 @@ marcadores à mão ou abre editores só para riscar/negritar um trecho.
 | 7 | Bolha renderizada em Shadow DOM, pill escura estilo WhatsApp, alvos de 28px | Injetar CSS no documento da página | Evita conflito de estilo com qualquer site e atendimento a WCAG de alvo/foco |
 | 8 | Lista de exclusão de domínios com editores que têm DOM/barra própria (Google Docs, Notion, Figma, Office) | Funcionar em todos sem exceção | Interferir nesses editores quebra a experiência deles |
 | 9 | Sem background/service worker, sem permissões além de content script em `<all_urls>` | activeTab + message | Não há nada para o background fazer; menos permissão = menos aviso na instalação |
+| 10 | Sintaxe WhatsApp aplicada como TEXTO mesmo em campo rico: o editor do WhatsApp Web é contenteditable que rejeita formatação HTML e só renderiza `*texto*` ao enviar | `execCommand` nativo no editor do WhatsApp | João reportou botões sem efeito no WhatsApp; inserir os marcadores literalmente é o único comportamento que o editor aceita (v0.1.1) |
+| 11 | Posição da bolha em textarea/input medida por div espelho (mesmos estilos de fonte/padding), ancorada no trecho selecionado | Ancorar no retângulo do elemento | João reportou: a bolha deve abrir perto de onde selecionou; fallback para o elemento se a medição falhar (v0.1.1) |
 
 ## Comportamento esperado
 

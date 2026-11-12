@@ -18,7 +18,8 @@ node --test "testes/*.test.js"
 
 ## Como funciona
 
-- **Campo rico** (contenteditable: Gmail, Outlook Web, editores de blog) → comandos nativos de rich text; a formatação é real.
+- **Campo rico** (contenteditable: Gmail, Outlook Web, editores de blog) → comandos nativos de rich text; a formatação é real. Exceção: editores que só entendem marcadores (WhatsApp Web) recebem a sintaxe do site inserida como texto — é o único formato que o editor deles aceita.
+- **Posicionamento**: a bolha abre junto do trecho selecionado — em textarea/input a posição é medida por div espelho; acompanha scroll e resize.
 - **Texto puro** (textarea/input) → sintaxe detectada por domínio em `src/dominios.js`: WhatsApp usa `*b*`, `_i_`, `~s~`; GitHub, Discord, Slack, Reddit, Trello e o fallback usam markdown (`**b**`, `*i*`, `~~s~~`). Site que formatar errado ou site novo: edite a tabela — é um arquivo único e comentado.
 - **Toggle em tudo**: clicar de novo no mesmo botão remove a formatação; dá pra encadear (negrito + itálico no mesmo trecho) e o trecho continua selecionado.
 - **Ctrl+Z preservado** nos campos de texto (`execCommand('insertText')`).
