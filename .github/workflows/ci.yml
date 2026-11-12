@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Sintaxe e manifest
+        run: |
+          node --check src/conteudo.js
+          node --check src/formatador.js
+          node --check src/dominios.js
+          node --check scripts/gerar-icones.js
+          node -e "JSON.parse(require('fs').readFileSync('manifest.json','utf8'))"
+      - name: Testes
+        run: node --test "testes/*.test.js"
